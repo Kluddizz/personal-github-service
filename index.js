@@ -1,9 +1,11 @@
 const fs = require("fs");
 const path = require("path");
+const dateFormat = require("dateformat");
 const bodyParser = require("body-parser");
 const helmet = require("helmet");
 const express = require("express");
 const cors = require("cors");
+
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -23,6 +25,18 @@ fs.readdirSync(routesPath).forEach((filename) => {
   if (path.extname(routePath) == ".js") {
     const routeName = path.basename(filename, ".js");
     const route = require(routePath);
+
+    route.use((err, req, res, next) => {
+      const now = new Date();
+      const dateTime = dateFormat(now, "yyyy-mm-dd HH:MM:ss");
+      console.log(`[${dateTime}] ${err.message}`);
+
+      res.status(400).json({
+        status: 400,
+        message: "An error occured",
+      });
+    });
+
     app.use(`/${routeName}`, route);
   }
 });
