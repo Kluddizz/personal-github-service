@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const helmet = require("helmet");
 const express = require("express");
 const cors = require("cors");
+const log = require("@kluddizz/log");
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -27,9 +28,7 @@ fs.readdirSync(routesPath).forEach((filename) => {
     const route = require(routePath);
 
     route.use((err, req, res, next) => {
-      const now = new Date();
-      const dateTime = dateFormat(now, "yyyy-mm-dd HH:MM:ss");
-      console.log(`[${dateTime}] ${err.message}`);
+      log(err.message, "error");
 
       res.status(400).json({
         status: 400,
@@ -43,5 +42,5 @@ fs.readdirSync(routesPath).forEach((filename) => {
 
 // Start the backend server.
 app.listen(port, () => {
-  console.log(`webserver running on port ${port}`);
+  log(`running on port ${port}`);
 });
